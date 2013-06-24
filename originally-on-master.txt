@@ -1,1 +1,5 @@
+However, there have been a few changes that occured on master.
+====
+These changes took place at 6:40 pm.
+This is to see how the merges can happen.
 This file was initially on the master branch. This is at 5:56 pm on Jun 23 '13.
