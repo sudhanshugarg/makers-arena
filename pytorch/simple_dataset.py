@@ -5,8 +5,8 @@ from typing import Tuple
 class SimpleDataset(Dataset):
     def __init__(self):
         self.n = 22
-        self.training_data = [torch.tensor([1 + i, 1 - i]) for i in range(self.n)]
-        self.label_data = [torch.tensor([101 + i]) for i in range(self.n)]
+        self.training_data = [torch.tensor([1.0 + i, 1.0 - i]) for i in range(self.n)]
+        self.label_data = [torch.tensor([101.0 + i]) for i in range(self.n)]
 
     def __len__(self) -> int:
         return self.n
