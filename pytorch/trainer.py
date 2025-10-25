@@ -18,20 +18,24 @@ class Trainer():
         optimizer = optim.Adam(model.parameters(), lr=1e-4)
 
         model.train()
+        step = 0
         with torch.enable_grad():
             for _ in range(max_epoch):
                 for batch_idx, (X, y) in enumerate(dataloader):
-                    print(f"batch {batch_idx}: {X}, {y}")
+                    #print(f"batch {batch_idx}: {X}, {y}")
                     X_device = X.to(device)
                     pred = model(X_device)
-                    print(f"pred = {pred}")
+                    #print(f"pred = {pred}")
                     #loss = self.compute_loss(pred, y)
                     y_device = y.to(device)
                     loss = F.mse_loss(pred, y_device)
+                    if step % 10 == 0:
+                        print(f"step: {step}, loss = {loss}")
 
                     optimizer.zero_grad()
                     loss.backward()
                     optimizer.step()
+                    step += 1
 
 
     def compute_loss(self, pred: torch.Tensor, actual: torch.Tensor) -> torch.Tensor:
@@ -43,8 +47,8 @@ def main():
     dataloader = DataLoader(dataset, batch_size=4, shuffle=False)
     
     trainer = Trainer()
-    model = SimpleModel(2, 1)
-    trainer.train(model=model, dataloader=dataloader)
+    model = SimpleModel(2, 1, hidden_layers=5, hidden_layer_dim=16)
+    trainer.train(model=model, dataloader=dataloader, max_epoch=200)
 
 if __name__ == "__main__":
     main()
