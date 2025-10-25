@@ -1,12 +1,11 @@
 import torch
 import torch.nn as nn
-import torch.optim as optim
 import torch.nn.functional as F
-from torch.utils.data.dataloader import DataLoader
-from typing import List
+
 
 class SimpleModel(nn.Module):
     def __init__(self, input_dim: int, output_dim: int, hidden_layers: int = 2, hidden_layer_dim: int = 32):
+        super(SimpleModel, self).__init__()
         is_bias = False
         self.layers = nn.ModuleList()
         input_layer: nn.Linear = nn.Linear(in_features=input_dim, out_features=hidden_layer_dim, bias=is_bias)
@@ -33,29 +32,17 @@ class SimpleModel(nn.Module):
     def backward(self) -> None:
         pass
 
+def main():
+    device = torch.accelerator.current_accelerator().type if torch.accelerator.is_available() else "cpu"
+    print (f"Using device: {device}")
+    model = SimpleModel(4, 2).to(device)
+    print(model)
 
-class ModelTrain():
-    def __init__(self):
-        pass
-
-
-    def train(self, model: SimpleModel, train_dataset: DataLoader, max_epoch: int = 5):
-
-        optimizer = optim.Adam(model.parameters(), lr=1e-4)
-        with torch.enable_grad():
-            for i in range(max_epoch):
-                # break the dataset into batches
-                for b_features, b_target in get_next_batch(train_dataset):
-                    optimizer.zero_grad()
-                    output = model(x)
-                    loss = F.mse_loss(b_target, output)
-                    loss.backward()
-                    optimizer.step()
+    input_tensor = torch.randn(3, 4).to(device)
+    output_tensor = model(input_tensor)
+    print("Input Tensor:", input_tensor)
+    print("Output Tensor:", output_tensor)
 
 
-        # DONE!
-
-
-    def eval(self):
-        with torch.no_grad():
-            pass
+if __name__ == "__main__":
+    main()

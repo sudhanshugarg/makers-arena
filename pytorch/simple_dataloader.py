@@ -10,8 +10,8 @@ def main():
     dataset = SimpleDataset()
     dataloader = DataLoader(dataset, batch_size=4, shuffle=True)
 
-    for i, batch in enumerate(dataloader):
-        print(i, batch.shape, batch)
+    for i, (batch_X, batch_y) in enumerate(dataloader):
+        print(i, batch_X, batch_y)
 
 if __name__ == "__main__":
     main()

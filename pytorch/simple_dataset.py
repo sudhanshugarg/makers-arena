@@ -1,23 +1,24 @@
 import torch
 from torch.utils.data.dataset import Dataset
+from typing import Tuple
 
 class SimpleDataset(Dataset):
     def __init__(self):
-        self.data = [torch.tensor([32 + i, 32 - i]) for i in range(22)]
+        self.n = 22
+        self.training_data = [torch.tensor([1 + i, 1 - i]) for i in range(self.n)]
+        self.label_data = [torch.tensor([101 + i]) for i in range(self.n)]
 
     def __len__(self) -> int:
-        return len(self.data)
+        return self.n
     
-    def __getitem__(self, idx):
-        return self.data[idx]
-    
-
+    def __getitem__(self, idx) -> Tuple[torch.Tensor, torch.Tensor]:
+        return self.training_data[idx], self.label_data[idx]
 
 
 def main():
     sample_dataset = SimpleDataset()
-    for i, sample in enumerate(sample_dataset):
-        print(i, sample, sample.shape)
+    for i, (sample_x, sample_y) in enumerate(sample_dataset):
+        print(i, sample_x, sample_y)
 
 
 if __name__ == "__main__":
