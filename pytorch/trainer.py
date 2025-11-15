@@ -22,7 +22,7 @@ class Trainer():
         with torch.enable_grad():
             for _ in range(max_epoch):
                 for batch_idx, (X, y) in enumerate(dataloader):
-                    #print(f"batch {batch_idx}: {X}, {y}")
+                    # print(f"batch {batch_idx}: {X.shape}, {y.shape}")
                     X_device = X.to(device)
                     pred = model(X_device)
                     #print(f"pred = {pred}")
@@ -43,12 +43,13 @@ class Trainer():
 
 
 def main():
-    dataset = SimpleDataset()
+    input_size = 2
+    dataset = SimpleDataset(seq_length=input_size, file_path="./data.txt")
     dataloader = DataLoader(dataset, batch_size=4, shuffle=False)
     
     trainer = Trainer()
-    model = SimpleModel(2, 1, hidden_layers=5, hidden_layer_dim=16)
-    trainer.train(model=model, dataloader=dataloader, max_epoch=200)
+    model = SimpleModel(input_size, input_size, hidden_layers=5, hidden_layer_dim=16)
+    trainer.train(model=model, dataloader=dataloader, max_epoch=15)
 
 if __name__ == "__main__":
     main()
