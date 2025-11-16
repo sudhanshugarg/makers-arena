@@ -17,6 +17,9 @@ class SelfAttentionModule(nn.Module):
         self.q = nn.Linear(d_model, query_key_dim)
         self.k = nn.Linear(d_model, query_key_dim)
         self.v = nn.Linear(d_model, d_model)
+
+        NEGATIVE_INFINITY = -10000.0
+        self.causal_mask = torch.triu(torch.ones(self.seq_length, self.seq_length), diagonal=1) * float(NEGATIVE_INFINITY)
         
         #TODO mlp: [gate_proj, up_proj, down_proj] matrices
 
@@ -35,8 +38,9 @@ class SelfAttentionModule(nn.Module):
         attention = torch.matmul(Q, K.transpose(1, 2)) / math.sqrt(self.d_model) # [batch_size, seq_len, seq_len]
         #print(f"Q: {Q.shape}, K: {K.shape}, attention: {attention.shape}")
 
-        #TODO masking
-        soft_maxed = F.softmax(attention, dim=2) # [batch_size, seq_len, seq_len]
+        mask = self.causal_mask.to(attention.device)
+        attention = torch.add(attention, mask)
+        soft_maxed = F.softmax(attention, dim=1) # [batch_size, seq_len, seq_len]
         V = self.v(x) # [batch_size, seq_len, d_model]
 
         return torch.matmul(soft_maxed, V) # [batch_size, seq_len, d_model]
