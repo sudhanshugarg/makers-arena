@@ -54,7 +54,7 @@ def attention():
     dataset = SimpleDataset(seq_length=input_size, file_path="./data.txt")
     print(f"num_chars={dataset.__len__()}")
     dataloader = DataLoader(dataset, batch_size=4, shuffle=False)
-    vocab_size = dataset.__len__() + 1
+    vocab_size = 32
     d_model = 1024
     token_embedding = nn.Embedding(num_embeddings=vocab_size, embedding_dim=d_model)
 

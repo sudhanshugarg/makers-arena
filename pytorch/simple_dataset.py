@@ -20,6 +20,7 @@ class SimpleDataset(Dataset):
             # print(f"{ch},")
             ids.append(self.charToIndex[ch])
         
+        print(f"vocab_size = {self.charToIndex.__len__()}")
         
         self.seq_length = seq_length
         # chosen_data = ids
