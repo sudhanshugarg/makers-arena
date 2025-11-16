@@ -16,6 +16,7 @@ class Trainer():
         device = torch.accelerator.current_accelerator().type if torch.accelerator.is_available() else "cpu"
         
         model = model.to(device)
+        token_embedding = token_embedding.to(device)
         optimizer = optim.Adam(list(model.parameters()) + list(token_embedding.parameters()), lr=1e-4)
 
         model.train()
@@ -25,16 +26,17 @@ class Trainer():
                 for batch_idx, (X, y) in enumerate(dataloader):
                     #print(f"batch {batch_idx}: {X.shape}, {y.shape}")
                     #with token dims
-                    X_token = token_embedding(X.to(torch.int64)) #[batch, seq, d_model]
-                    y_token = token_embedding(y.to(torch.int64)) #[batch, seq, d_model]
                     #print(f"X_token: {X_token.shape}, X: {X.shape}")
 
-                    X_device = X_token.to(device) #[batch, seq]
+                    X_moved = X.to(device) #[batch, seq]
+                    y_moved = y.to(device)
+
+                    X_device = token_embedding(X_moved.to(torch.int64)) #[batch, seq, d_model]
+                    y_device = token_embedding(y_moved.to(torch.int64)) #[batch, seq, d_model]
 
                     pred = model(X_device)
                     #print(f"pred = {pred}")
                     #loss = self.compute_loss(pred, y)
-                    y_device = y_token.to(device)
                     loss = F.mse_loss(pred, y_device)
                     if step % 10 == 0:
                         print(f"step: {step}, loss = {loss}")
